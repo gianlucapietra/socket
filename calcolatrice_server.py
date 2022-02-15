@@ -55,5 +55,5 @@ def avvia_server(HOST,PORT):
     print("Server in ascolto su %s." % str((HOST, PORT)))
     ricevi_connessioni(sock_listen)
 
-if _name=='main_':
+if __name__=='__main__':
     avvia_server(HOST,PORT)

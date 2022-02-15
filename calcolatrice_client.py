@@ -28,5 +28,5 @@ def connessione_server(address,port):
     print("Connesso a " + str((address, port)))
     invia_comandi(sock_service)
 
-if _name=='main_':
+if __name__=='__main__':
     connessione_server(HOST,PORT)
