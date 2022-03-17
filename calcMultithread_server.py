@@ -4,7 +4,7 @@ from threading import Thread
 import json
 
 HOST="127.0.0.1"
-PORT=22225
+PORT=3469823
 
 def ricevi_comandi(sock_service, addr_client):
     print("avviato")

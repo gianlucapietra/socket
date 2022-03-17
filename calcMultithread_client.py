@@ -9,7 +9,7 @@ import multiprocessing
 import json
 
 SERVER_ADDRESS = '127.0.0.1'
-SERVER_PORT = 22225
+SERVER_PORT = 18233
 NUM_WORKERS=2
 
 def genera_richieste(num,address,port):
