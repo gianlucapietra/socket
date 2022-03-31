@@ -1,5 +1,6 @@
 #nome del file : pagellaServerMulti.py
 
+from pprint import pprint
 import socket
 from threading import Thread
 import json
@@ -18,32 +19,34 @@ def ricevi_comandi1(sock_service,addr_client):
         data=json.loads(data)        
         #1. recuperare dal json studente, materia, voto e assenze
         alunno=data['alunno']
-        materie=data['materia']
+        materia=data['materia']
         voto=data['voto']
         assenze=data['assenze']
-        messaggio=""
         #2. restituire un messaggio in json contenente studente, materia e una valutazione testuale :
         # voto < 4 Gravemente insufficiente
         if voto<4:
-            messaggio="valutazione: gravemente insufficiente"
+            valutazione="valutazione: gravemente insufficiente"
         # voto [4..5] Insufficiente
         elif voto==4 or voto==5: 
-            messaggio="valutazione: insufficiente"
+            valutazione="valutazione: insufficiente"
         # voto = 6 Sufficiente
         elif voto==6:
-            messaggio="valutazione: sufficiente"
+            valutazione="valutazione: sufficiente"
         # voto = 7 Discreto 
         elif voto==7:
-            messaggio="valutazione: discreta"
+            valutazione="valutazione: discreta"
         # voto [8..9] Buono
         elif voto==8 or voto==9:
-            messaggio="valutazione: buono"
+            valutazione="valutazione: buono"
         # voto = 10 Ottimo
         elif voto==10:
-            messaggio="valutazione: ottimo"
-            messaggio=json.dumps(data)
+            valutazione="valutazione: ottimo"
+        messaggio={'alunno':alunno,
+        'materia':materia,
+        'valutazione':valutazione}
+        print(messaggio)
+        messaggio:json.dumps(messaggio)
         sock_service.sendall(messaggio.encode("UTF-8"))
-
     sock_service.close()
 
 #Versione 2 
@@ -57,12 +60,16 @@ def ricevi_comandi2(sock_service,addr_client):
         #1.recuperare dal json studente e pagella
         alunno=data['alunno']
         pagella=data['pagella']
-        messaggio=""
         assenze=0
         media=0
-        for i in range(data['materie']):
-            media+=data[i][2]
-            assenze+=data[i][3]
+        for i,p in range:
+            media+=int(p[1])
+            assenze+=int(p[2])
+        media=media/i
+        messaggio={'alunno':alunno,
+        'media':media,
+        'assenze':assenze}
+        print(messaggio)
         messaggio=json.dumps(data)
         sock_service.sendall(messaggio.encode("UTF-8"))
 
@@ -72,7 +79,31 @@ def ricevi_comandi2(sock_service,addr_client):
 
 #Versione 3
 def ricevi_comandi3(sock_service,addr_client):
-    pass
+    while True: 
+        data=sock_service.recv(1024)
+        if not data:
+                break
+        data=data.decode()
+        data=json.loads(data)
+        pp=pprint.PrettyPrinter(indent=4)
+        tabellone=[]
+        for a in data:
+            pagella=data[a]
+            assenze=0
+            media=0
+            for i,p in enumerate(pagella):
+                media+=int(p[1])
+                assenze+=int(p[2])
+                media=media/i
+                messaggio={'alunno':a,
+                'media':media,
+                'assenze':assenze}
+                tabellone.append(messaggio)
+        pp.pprint(tabellone)
+        messaggio=tabellone
+        messaggio=json.dumps(messaggio)
+        sock_service.sendall(messaggio.encode("UTF-8"))
+    sock_service.close()
   #....
   #1.recuperare dal json il tabellone
   #2. restituire per ogni studente la media dei voti e somma delle assenze :
